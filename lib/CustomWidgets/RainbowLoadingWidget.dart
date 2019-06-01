@@ -48,7 +48,7 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
 
     _arcAndRotationAnimationController = new AnimationController(vsync: this, duration: _arcAndRotationAnimationDuration);
 
-    var curveAnimation = CurvedAnimation(parent: _arcAndRotationAnimationController, curve: Curves.easeInOut);
+    var curveAnimation = CurvedAnimation(parent: _arcAndRotationAnimationController, curve: Curves.easeInOutCubic);
     _arcAndRotationAnimation = Tween(begin: _animationStartValue, end: _animationEndValue).animate(curveAnimation)
       ..addListener(() {
         setState(() {
@@ -56,7 +56,7 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
         });
       });
     _arcAndRotationAnimationController.addStatusListener((status) {
-      print("arc animation status: $status");
+      //print("arc animation status: $status");
       if (status == AnimationStatus.completed) {
         // Switch current color
         _currentColorIndex = _currentColorIndex + 1 >= _loadingColors.length ? 0 : _currentColorIndex + 1;

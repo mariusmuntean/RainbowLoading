@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
     var rainbowLoadingWidget = RainbowLoadingWidget();
     return Scaffold(
       body: Container(
+        color: Colors.white10,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

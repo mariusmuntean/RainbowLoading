@@ -9,7 +9,7 @@ class RainbowLoading extends CustomPainter {
 
   RainbowLoading(this._progress, this._loadingPaintColor, this._scale) {
     _loadingPaint = new Paint()
-      ..strokeWidth = 10.0
+      ..strokeWidth = 7.0
       ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke
       ..isAntiAlias = true
@@ -27,11 +27,24 @@ class RainbowLoading extends CustomPainter {
     // Rotate the canvas around its center
     canvas.rotate(_progress * 2 * math.pi);
 
+    // Draw the shadow
+    var shadowPath = Path();
+    shadowPath.addOval(Rect.fromCircle(center: Offset.zero, radius: size.width / 2));
+    canvas.drawShadow(shadowPath, Colors.grey[350], 10.0, true);
+
+    // Draw the circular background
+    var backgroundDiscPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(Offset.zero, size.width / 2, backgroundDiscPaint);
+
     // Draw the circle arc
     double startAngle = 1.5 * math.pi;
     double sweepAngle = _progress * 2 * math.pi;
-
-    canvas.drawArc(Rect.fromLTRB(-size.width / 2, -size.height / 2, size.width / 2, size.height / 2), startAngle, sweepAngle, false, _loadingPaint);
+    var arcRadius = size.width * 0.5;
+    var rect = Rect.fromLTRB(-arcRadius / 2, -arcRadius / 2, arcRadius / 2, arcRadius / 2);
+    canvas.drawArc(rect, startAngle, sweepAngle, false, _loadingPaint);
   }
 
   @override
