@@ -7,6 +7,7 @@ void main() => runApp(MaterialApp(home: MyApp()));
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var rainbowLoadingWidget = RainbowLoadingWidget();
     return Scaffold(
       body: Container(
         child: Column(
@@ -16,8 +17,20 @@ class MyApp extends StatelessWidget {
               alignment: AlignmentDirectional.center,
               child: SizedBox.fromSize(
                 size: Size(100, 100),
-                child: RainbowLoadingWidget(),
+                child: rainbowLoadingWidget,
               ),
+            ),
+            RaisedButton(
+              child: Text("Go"),
+              onPressed: () {
+                rainbowLoadingWidget?.start();
+              },
+            )            ,
+            RaisedButton(
+              child: Text("Stop"),
+              onPressed: () {
+                rainbowLoadingWidget?.stop();
+              },
             )
           ],
         ),

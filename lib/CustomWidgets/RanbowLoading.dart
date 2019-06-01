@@ -9,7 +9,7 @@ class RainbowLoading extends CustomPainter {
 
   RainbowLoading(this._progress, this._loadingPaintColor, this._scale) {
     _loadingPaint = new Paint()
-      ..strokeWidth = 5.0
+      ..strokeWidth = 10.0
       ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke
       ..isAntiAlias = true
@@ -18,11 +18,13 @@ class RainbowLoading extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Translate to the center of the canvas and apply all transforms relative ot the center
+    canvas.translate(size.width / 2.0, size.height / 2.0);
+
     // Scale the canvas
     canvas.scale(_scale);
 
     // Rotate the canvas around its center
-    canvas.translate(size.width / 2.0, size.height / 2.0);
     canvas.rotate(_progress * 2 * math.pi);
 
     // Draw the circle arc
