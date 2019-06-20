@@ -22,16 +22,28 @@ class RainbowLoadingWidget extends StatefulWidget {
 
 class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerProviderStateMixin {
   final List<Color> _loadingColors = [Color.fromARGB(255, 66, 133, 244), Color.fromARGB(255, 219, 68, 55), Color.fromARGB(255, 244, 160, 0), Color.fromARGB(255, 15, 157, 88)];
-  final Duration _arcAndRotationAnimationDuration = Duration(milliseconds: 1500);
-  final double _animationStartValue = 0.0;
-  final double _animationEndValue = 1.0;
 
-  AnimationController _arcAndRotationAnimationController;
+  final _arcAnimationDuration = Duration(milliseconds: 1300);
+  final _rotationAnimationDuration = Duration(milliseconds: 1500);
+  final _scaleAnimationDuration = Duration(milliseconds: 800);
+
+  final _arcAnimationStartValue = 0.0;
+  final _arcAnimationEndValue = 1.0;
+  final _rotationAnimationStartValue = 0.0;
+  final _rotationAnimationEndValue = 1.0;
+  final _scaleAnimationStartValue = 0.0;
+  final _scaleAnimationEndValue = 1.0;
+
+  AnimationController _arcAnimationController;
+  AnimationController _rotationAnimationController;
   AnimationController _scaleAnimationController;
-  Animation<double> _arcAndRotationAnimation;
+
+  Animation<double> _arcAnimation;
+  Animation<double> _rotationAnimation;
   Animation<double> _scaleAnimation;
 
-  double _progress;
+  double _arcProgress;
+  double _rotation;
   double _scale;
 
   int _currentColorIndex;
@@ -42,20 +54,21 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
     super.initState();
 
     _scale = 0.0;
-    _progress = 0.0;
+    _rotation = 0.0;
+    _arcProgress = 0.0;
     _currentColorIndex = 0;
     _currentColor = _loadingColors[_currentColorIndex];
 
-    _arcAndRotationAnimationController = new AnimationController(vsync: this, duration: _arcAndRotationAnimationDuration);
-
-    var curveAnimation = CurvedAnimation(parent: _arcAndRotationAnimationController, curve: Curves.easeInOutCubic);
-    _arcAndRotationAnimation = Tween(begin: _animationStartValue, end: _animationEndValue).animate(curveAnimation)
+    // Arc animation
+    _arcAnimationController = new AnimationController(vsync: this, duration: _arcAnimationDuration);
+    var curveAnimation = CurvedAnimation(parent: _arcAnimationController, curve: Curves.easeInOutCubic);
+    _arcAnimation = Tween(begin: _arcAnimationStartValue, end: _arcAnimationEndValue).animate(curveAnimation)
       ..addListener(() {
         setState(() {
-          _progress = _arcAndRotationAnimation.value;
+          _arcProgress = _arcAnimation.value;
         });
       });
-    _arcAndRotationAnimationController.addStatusListener((status) {
+    _arcAnimationController.addStatusListener((status) {
       //print("arc animation status: $status");
       if (status == AnimationStatus.completed) {
         // Switch current color
@@ -63,12 +76,29 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
         _currentColor = _loadingColors[_currentColorIndex];
 
         // Repeat the animation
-        _arcAndRotationAnimationController.forward(from: 0.0);
+        _arcAnimationController.forward(from: _arcAnimationStartValue);
       }
     });
 
-    _scaleAnimationController = new AnimationController(vsync: this, duration: Duration(milliseconds: 800));
-    _scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(_scaleAnimationController)
+    // Rotation animation
+    _rotationAnimationController = new AnimationController(vsync: this, duration: _rotationAnimationDuration);
+    _rotationAnimation = Tween(begin: _rotationAnimationStartValue, end: _rotationAnimationEndValue).animate(_rotationAnimationController)
+      ..addListener(() {
+        setState(() {
+          _rotation = _rotationAnimation.value;
+        });
+      });
+    _rotationAnimationController.addStatusListener((status) {
+      //print("rotation animation status: $status");
+      if (status == AnimationStatus.completed) {
+        // Repeat the animation
+        _rotationAnimationController.forward(from: _rotationAnimationStartValue);
+      }
+    });
+
+    // Scale Animation
+    _scaleAnimationController = new AnimationController(vsync: this, duration: _scaleAnimationDuration);
+    _scaleAnimation = Tween(begin: _scaleAnimationStartValue, end: _scaleAnimationEndValue).animate(_scaleAnimationController)
       ..addListener(() {
         setState(() {
           _scale = _scaleAnimation.value;
@@ -79,7 +109,7 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: RainbowLoading(_progress, _currentColor, _scale),
+      painter: RainbowLoading(_scale, _rotation, _arcProgress, _currentColor)
     );
   }
 
@@ -88,18 +118,21 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
     super.dispose();
 
     _scaleAnimationController.dispose();
-    _arcAndRotationAnimationController.dispose();
+    _rotationAnimationController.dispose();
+    _arcAnimationController.dispose();
   }
 
   void start() {
-    _scaleAnimationController.forward(from: _animationStartValue);
-    _arcAndRotationAnimationController.forward(from: _animationStartValue);
+    _scaleAnimationController.forward(from: _arcAnimationStartValue);
+    _arcAnimationController.forward(from: _arcAnimationStartValue);
+    _rotationAnimationController.forward(from: _rotationAnimationStartValue);
   }
 
   void stop() {
-    _scaleAnimationController.reverse(from: 1.0).then((val) {
+    _scaleAnimationController.reverse(from: _scale).then((val) {
       _scaleAnimationController.stop(canceled: false);
-      _arcAndRotationAnimationController.stop(canceled: false);
+      _arcAnimationController.stop(canceled: false);
+      _rotationAnimationController.stop(canceled: false);
     });
   }
 }
