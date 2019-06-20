@@ -26,7 +26,7 @@ class RainbowLoading extends CustomPainter {
     canvas.scale(_scale);
 
     // Rotate the canvas around its center
-    var canvasRotation = 0.0 * 2.25 * math.pi;
+    var canvasRotation = _rotation * 2 * math.pi;
     canvas.rotate(canvasRotation);
 
     // Draw the shadow

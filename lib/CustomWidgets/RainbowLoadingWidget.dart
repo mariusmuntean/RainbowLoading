@@ -23,8 +23,8 @@ class RainbowLoadingWidget extends StatefulWidget {
 class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerProviderStateMixin {
   final List<Color> _loadingColors = [Color.fromARGB(255, 66, 133, 244), Color.fromARGB(255, 219, 68, 55), Color.fromARGB(255, 244, 160, 0), Color.fromARGB(255, 15, 157, 88)];
 
-  final _arcAnimationDuration = Duration(milliseconds: 1300);
-  final _rotationAnimationDuration = Duration(milliseconds: 1500);
+  final _arcAnimationDuration = Duration(milliseconds: 1500);
+  final _rotationAnimationDuration = Duration(milliseconds: 2000);
   final _scaleAnimationDuration = Duration(milliseconds: 800);
 
   final _arcAnimationStartValue = 0.0;
@@ -61,7 +61,7 @@ class RainbowLoadingWidgetState extends State<RainbowLoadingWidget> with TickerP
 
     // Arc animation
     _arcAnimationController = new AnimationController(vsync: this, duration: _arcAnimationDuration);
-    var curveAnimation = CurvedAnimation(parent: _arcAnimationController, curve: Curves.easeInOutCubic);
+    var curveAnimation = CurvedAnimation(parent: _arcAnimationController, curve: Curves.easeInOutSine);
     _arcAnimation = Tween(begin: _arcAnimationStartValue, end: _arcAnimationEndValue).animate(curveAnimation)
       ..addListener(() {
         setState(() {
